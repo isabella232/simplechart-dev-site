@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Plugin Coding Standards Configuration">
+	<!-- Set a description for this ruleset. -->
+	<description>Code standard rules to check against a WordPress Plugin.</description>
+
+	<exclude-pattern>tests/*</exclude-pattern>
+
+	<!-- Include the WordPress ruleset, with exclusions. -->
+	<rule ref="WordPress" />
+
+</ruleset>
