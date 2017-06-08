@@ -7,5 +7,6 @@ node_modules/
 uploads/
 upgrade/
 
-# Hack to keep this plugin attached to its remote
+# Hack to keep these plugins attached to their remotes
 plugins/meta-inspector/.git
+plugins/wordpress-simplechart/.git
