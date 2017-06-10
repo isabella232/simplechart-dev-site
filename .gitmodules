@@ -1,0 +1,3 @@
+[submodule "plugins/wordpress-simplechart"]
+	path = plugins/wordpress-simplechart
+	url = git@github.com:alleyinteractive/wordpress-simplechart.git
