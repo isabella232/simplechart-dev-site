@@ -18,8 +18,7 @@ class Simplechart_Dev_Mode_Settings {
 	}
 
 	public function setup() {
-		fm_register_submenu_page( 'simplechart_dev_mode', 'options-general.php', __( 'Simplechart Dev Mode', 'simplechart-dev-mode' ) );
-		add_action( 'fm_submenu_simplechart_dev_mode', array( $this, 'options_init' ) );
+		add_action( 'fm_user', array( $this, 'options_init') );
 		add_action( 'fm_element_markup_start', array( $this, 'prepend_static_content' ), 10, 2 );
 	}
 
@@ -30,7 +29,7 @@ class Simplechart_Dev_Mode_Settings {
 				'override_app' => new Fieldmanager_Checkbox( __( 'Apply JS overrides', 'simplechart-dev-mode' ) ),
 			),
 		) );
-		$fm->activate_submenu_page();
+		$fm->add_user_form( 'Simplechart Dev Mode' );
 	}
 
 	public function prepend_static_content( $out, $field ) {

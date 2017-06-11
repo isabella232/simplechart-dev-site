@@ -53,9 +53,9 @@ function simplechart_dev_mode_get_js_url( $type ) {
 
 // Set up the settings page and maybe overrides.
 add_action( 'after_setup_theme', function() {
-	require( SC_DEV_MODE_PATH . '/modules/settings-page.php' );
+	require_once( SC_DEV_MODE_PATH . '/modules/settings-page.php' );
 
-	$overrides = get_option( 'simplechart_dev_mode', array() );
+	$overrides = get_user_meta( get_current_user_id(), 'simplechart_dev_mode', true );
 
 	if ( ! empty( $overrides['override_app'] ) ) {
 		add_filter( 'simplechart_webpack_public_path', function( $default ) {
