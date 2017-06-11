@@ -33,10 +33,8 @@ class Simplechart_Dev_Mode_Settings {
 
 	public function prepend_static_content( $out, $field ) {
 		if ( 'simplechart_dev_mode' === $field->name ) {
-			require( SC_DEV_MODE_PATH . '/modules/settings-page-prepend.php' );
+			require( SC_DEV_MODE_PATH . '/inc/settings-page-prepend.php' );
 		}
 		return $out;
 	}
 }
-
-Simplechart_Dev_Mode_Settings::instance();

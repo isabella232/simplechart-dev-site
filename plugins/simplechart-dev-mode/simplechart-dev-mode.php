@@ -10,74 +10,18 @@
  * @package simplechart-dev-mode
  */
 
+// Setup
 define( 'SC_DEV_MODE_PATH', dirname( __FILE__ ) );
+require_once( SC_DEV_MODE_PATH . '/inc/helpers.php' );
+require_once( SC_DEV_MODE_PATH . '/inc/settings-page.php' );
 
-/**
- * Get the Git hash "version" from the filename
- *
- * @param string $type 'app' or 'widget'.
- * @param string $path Absolute path to directory containing the files.
- * @return string $version Git hash or empty string.
- */
-function simplechart_dev_mode_get_js_version( $type, $path ) {
-	$contents = scandir( $path );
-	if ( empty( $contents ) ) {
-		return '';
-	}
-
-	foreach ( $contents as $file ) {
-		preg_match( '/^' . $type . '\.(\w+)\.js$/', $file, $matches );
-		if ( ! empty( $matches[1] ) ) {
-			return $matches[1];
-		}
-	}
-	return '';
-}
-
-/**
- * Get URL of app, vendor or widget JS from Simplechart Dev Mode plugin
- *
- * @param string $type 'app', 'vendor' or 'widget'.
- * @return string $url URL or empty string.
- */
-function simplechart_dev_mode_get_js_url( $type ) {
-	$version = simplechart_dev_mode_get_js_version( $type, SC_DEV_MODE_PATH . '/js' );
-	if ( empty( $version ) ) {
-		return '';
-	}
-	$url_path = sprintf( 'simplechart-dev-mode/js/%s.%s.js', $type, $version );
-	return plugins_url( $url_path );
-}
-
-/**
- * Map options values to labels
- *
- * @return array
- */
-function simplechart_dev_mode_get_options() {
-	return array(
-		'plugin' => __( 'Plugin', 'simplechart-dev-mode' ),
-		'app' => __( 'App', 'simplechart-dev-mode' ),
-		'localhost' => __( 'localhost:8080', 'simplechart-dev-mode' ),
-	);
-}
-
-/**
- * Get JS source for current user
- *
- * @param int $id Optional user ID, defaults to current logged-in user
- * @return string 'plugin', 'app', 'localhost'. Defaults to 'plugin' if no user is available
- */
-function simplechart_dev_mode_get_user_js_source( $id = null ) {
-	$get_id = $id ? $id : get_current_user_id();
-	$source = get_user_meta( $get_id, 'simplechart_dev_mode', true );
-	return ! empty( $source ) ? $source : 'plugin';
-}
-
-// Set up the settings page and maybe overrides.
+// User settings page
 add_action( 'after_setup_theme', function() {
-	require_once( SC_DEV_MODE_PATH . '/modules/settings-page.php' );
+	Simplechart_Dev_Mode_Settings::instance();
+} );
 
+// Override JS if applicable
+add_action( 'init', function() {
 	$source = simplechart_dev_mode_get_user_js_source();
 
 	// Default to JS from wordpress-simplechart plugin
@@ -85,30 +29,25 @@ add_action( 'after_setup_theme', function() {
 		return;
 	}
 
-	// Specify localhost or app to override default JS
-	if ( 'localhost' === $source ) {
-		$public_path = 'http://localhost:8080/static';
-		$app_js_url = 'http://localhost:8080/static/app.js';
-		$vendor_js_url = 'http://localhost:8080/static/vendor.js';
-		$widget_js_url = 'http://localhost:8080/static/widget.js';
-	} else {
-		$public_path = plugin_dir_url( __FILE__ ) . 'js/';
-		$app_js_url = simplechart_dev_mode_get_js_url( 'app' );
-		$vendor_js_url = simplechart_dev_mode_get_js_url( 'vendor' );
-		$widget_js_url = simplechart_dev_mode_get_js_url( 'widget' );
-	}
-
 	add_filter( 'simplechart_webpack_public_path', function( $default ) {
-		return $public_path;
+		return 'localhost' === simplechart_dev_mode_get_user_js_source() ?
+			'http://localhost:8080/static' :
+			plugin_dir_url( __FILE__ ) . 'js/';
 	} );
 	add_filter( 'simplechart_web_app_js_url', function( $default ) {
-		return $app_js_url;
+		return 'localhost' === simplechart_dev_mode_get_user_js_source() ?
+			'http://localhost:8080/static/app.js' :
+			simplechart_dev_mode_get_js_url( 'app' );
 	} );
 	add_filter( 'simplechart_vendor_js_url', function( $default ) {
-		return $vendor_js_url;
+		return 'localhost' === simplechart_dev_mode_get_user_js_source() ?
+			'http://localhost:8080/static/vendor.js' :
+			simplechart_dev_mode_get_js_url( 'vendor' );
 	} );
 	add_filter( 'simplechart_widget_loader_url', function( $default ) {
-		return $widget_js_url;
+		return 'localhost' === simplechart_dev_mode_get_user_js_source() ?
+			'http://localhost:8080/static/widget.js' :
+			simplechart_dev_mode_get_js_url( 'widget' );
 	} );
 } );
 
@@ -121,15 +60,25 @@ add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
 		esc_html( simplechart_dev_mode_get_options()[ $source ] )
 	);
 
+	if ( 'localhost' !== $source ) {
+		// add version hash to admin bar note
+		$app_path = ( 'app' === $source ) ?
+			SC_DEV_MODE_PATH . '/js' :
+			Simplechart::instance()->get_plugin_dir( 'js/app' );
+		$version_hash = simplechart_dev_mode_get_js_version( 'app', $app_path );
+		$node_html .= ' (' . esc_html( $version_hash ) . ')';
+
+		// link to version
+		$href = simplechart_dev_mode_get_github_commit_url( $version_hash );
+	} else {
+		$href = false;
+	}
+
 	$args = array(
 		'id' => 'simplechart-dev-mode',
 		'title' => $node_html,
+		'href' => $href,
 	);
-
-	if ( 'localhost' !== $source ) {
-		// add version hash to title if using plugin or app (not localhost)
-		// add 'href' to $args
-	}
 
 	$wp_admin_bar->add_node( $args );
 }, 999 );
