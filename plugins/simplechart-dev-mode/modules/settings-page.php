@@ -23,11 +23,10 @@ class Simplechart_Dev_Mode_Settings {
 	}
 
 	public function options_init() {
-		$fm = new Fieldmanager_Group( array(
+		$fm = new Fieldmanager_Radios( array(
 			'name' => 'simplechart_dev_mode',
-			'children' => array(
-				'override_app' => new Fieldmanager_Checkbox( __( 'Apply JS overrides', 'simplechart-dev-mode' ) ),
-			),
+			'options' => simplechart_dev_mode_get_options(),
+			'default_value' => 'plugin',
 		) );
 		$fm->add_user_form( 'Simplechart Dev Mode' );
 	}

@@ -35,9 +35,9 @@ function simplechart_dev_mode_get_js_version( $type, $path ) {
 }
 
 /**
- * Get URL of app or widget JS from Simplechart Dev Mode plugin
+ * Get URL of app, vendor or widget JS from Simplechart Dev Mode plugin
  *
- * @param string $type 'app' or 'widget'.
+ * @param string $type 'app', 'vendor' or 'widget'.
  * @return string $url URL or empty string.
  */
 function simplechart_dev_mode_get_js_url( $type ) {
@@ -49,24 +49,87 @@ function simplechart_dev_mode_get_js_url( $type ) {
 	return plugins_url( $url_path );
 }
 
+/**
+ * Map options values to labels
+ *
+ * @return array
+ */
+function simplechart_dev_mode_get_options() {
+	return array(
+		'plugin' => __( 'Plugin', 'simplechart-dev-mode' ),
+		'app' => __( 'App', 'simplechart-dev-mode' ),
+		'localhost' => __( 'localhost:8080', 'simplechart-dev-mode' ),
+	);
+}
 
+/**
+ * Get JS source for current user
+ *
+ * @param int $id Optional user ID, defaults to current logged-in user
+ * @return string 'plugin', 'app', 'localhost'. Defaults to 'plugin' if no user is available
+ */
+function simplechart_dev_mode_get_user_js_source( $id = null ) {
+	$get_id = $id ? $id : get_current_user_id();
+	$source = get_user_meta( $get_id, 'simplechart_dev_mode', true );
+	return ! empty( $source ) ? $source : 'plugin';
+}
 
 // Set up the settings page and maybe overrides.
 add_action( 'after_setup_theme', function() {
 	require_once( SC_DEV_MODE_PATH . '/modules/settings-page.php' );
 
-	$overrides = get_user_meta( get_current_user_id(), 'simplechart_dev_mode', true );
+	$source = simplechart_dev_mode_get_user_js_source();
 
-	if ( ! empty( $overrides['override_app'] ) ) {
-		add_filter( 'simplechart_webpack_public_path', function( $default ) {
-			return plugin_dir_url( __FILE__ ) . 'js/';
-		} );
-
-		add_filter( 'simplechart_web_app_js_url', function( $default ) {
-			return simplechart_dev_mode_get_js_url( 'app' );
-		} );
-		add_filter( 'simplechart_widget_loader_url', function( $default ) {
-			return simplechart_dev_mode_get_js_url( 'widget' );
-		} );
+	// Default to JS from wordpress-simplechart plugin
+	if ( empty( $source ) || 'plugin' === $source ) {
+		return;
 	}
+
+	// Specify localhost or app to override default JS
+	if ( 'localhost' === $source ) {
+		$public_path = 'http://localhost:8080/static';
+		$app_js_url = 'http://localhost:8080/static/app.js';
+		$vendor_js_url = 'http://localhost:8080/static/vendor.js';
+		$widget_js_url = 'http://localhost:8080/static/widget.js';
+	} else {
+		$public_path = plugin_dir_url( __FILE__ ) . 'js/';
+		$app_js_url = simplechart_dev_mode_get_js_url( 'app' );
+		$vendor_js_url = simplechart_dev_mode_get_js_url( 'vendor' );
+		$widget_js_url = simplechart_dev_mode_get_js_url( 'widget' );
+	}
+
+	add_filter( 'simplechart_webpack_public_path', function( $default ) {
+		return $public_path;
+	} );
+	add_filter( 'simplechart_web_app_js_url', function( $default ) {
+		return $app_js_url;
+	} );
+	add_filter( 'simplechart_vendor_js_url', function( $default ) {
+		return $vendor_js_url;
+	} );
+	add_filter( 'simplechart_widget_loader_url', function( $default ) {
+		return $widget_js_url;
+	} );
 } );
+
+// Show Simplechart version in admin bar
+add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
+	$source = simplechart_dev_mode_get_user_js_source();
+	$node_html = sprintf(
+		'%s %s',
+		esc_html__( 'Simplechart JS source:' ),
+		esc_html( simplechart_dev_mode_get_options()[ $source ] )
+	);
+
+	$args = array(
+		'id' => 'simplechart-dev-mode',
+		'title' => $node_html,
+	);
+
+	if ( 'localhost' !== $source ) {
+		// add version hash to title if using plugin or app (not localhost)
+		// add 'href' to $args
+	}
+
+	$wp_admin_bar->add_node( $args );
+}, 999 );
