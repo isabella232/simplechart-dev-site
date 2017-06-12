@@ -33,26 +33,34 @@ Then in your local WordPress site:
 
 ## Local WordPress plugin development
 
-To work on the WordPress plugin, you'll delete the version that came with this repository, and clone just the plugin from GitHub.
+The WordPress Simplechart plugin is set up as a Git submodule. So any changes you make in `plugins/wordpress-simplechart` are tracked by `git@github.com:alleyinteractive/wordpress-simplechart.git`; the `simplechart-dev-site` repository only tracks a reference to the Git history of the submodule repo.
 
-Because `plugins/wordpress-simplechart/.git` is ignored, you can make changes in the plugin directory and commit them to **both** `simplechart-dev-site` and `wordpress-simplechart` separately.
+Here's how to make changes to the plugin and then update this repository:
 
 ```
-$ cd {the plugins/ dir of your simplechart-dev-site install}
-$ rm -rf wordpress-simplechart
-$ git clone git@github.com:alleyinteractive/wordpress-simplechart.git
-$ cd wordpress-simplechart
-# checkout branches, commit changes, etc
-$ git push origin my-branch # pushes to alleyinteractive/wordpress-simplechart
+# Start by updating the local submodule (installing first if needed)
+$ git submodule update --init
+$ cd plugins/wordpress-simplechart
+$ git remote -v
+# Should tell you git@github.com:alleyinteractive/wordpress-simplechart.git
+# checkout branches, commit changes, pull request, etc
 $ cd ..
-# checkout branches, commit changes, etc
-$ git push origin my-branch # pushes to alleyinteractive/simplechart-dev-site
+$ git remote -v
+# Should tell you git@github.com:alleyinteractive/simplechart-dev-site.git
+$ git status
+# On branch XXXXXXXX
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   wordpress-simplechart (new commits)
+#
+#no changes added to commit (use "git add" and/or "git commit -a")
+$ git commit -am "udpate wordpress-simplechart plugin"
+# push to github...
 ```
 
-Notes:
-
-1. `plugins/wordpress-simplechart` does _not_ need to initialized as a submodule
-1. You _can_ do local JS app development and WordPress plugin development at the same time
+**Note:** You _can_ do local JS app development and WordPress plugin development at the same time
 
 ## Automated deployments
 
