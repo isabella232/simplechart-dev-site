@@ -18,27 +18,23 @@ class Simplechart_Dev_Mode_Settings {
 	}
 
 	public function setup() {
-		fm_register_submenu_page( 'simplechart_dev_mode', 'options-general.php', __( 'Simplechart Dev Mode', 'simplechart-dev-mode' ) );
-		add_action( 'fm_submenu_simplechart_dev_mode', array( $this, 'options_init' ) );
+		add_action( 'fm_user', array( $this, 'options_init') );
 		add_action( 'fm_element_markup_start', array( $this, 'prepend_static_content' ), 10, 2 );
 	}
 
 	public function options_init() {
-		$fm = new Fieldmanager_Group( array(
+		$fm = new Fieldmanager_Radios( array(
 			'name' => 'simplechart_dev_mode',
-			'children' => array(
-				'override_app' => new Fieldmanager_Checkbox( __( 'Apply JS overrides', 'simplechart-dev-mode' ) ),
-			),
+			'options' => simplechart_dev_mode_get_options(),
+			'default_value' => 'plugin',
 		) );
-		$fm->activate_submenu_page();
+		$fm->add_user_form( 'Simplechart Dev Mode' );
 	}
 
 	public function prepend_static_content( $out, $field ) {
 		if ( 'simplechart_dev_mode' === $field->name ) {
-			require( SC_DEV_MODE_PATH . '/modules/settings-page-prepend.php' );
+			require( SC_DEV_MODE_PATH . '/inc/settings-page-prepend.php' );
 		}
 		return $out;
 	}
 }
-
-Simplechart_Dev_Mode_Settings::instance();
