@@ -93,7 +93,7 @@ if ( defined( 'SIMPLECHART_DEV_MODE_BASIC_AUTH_USER' ) &&
 	add_filter( 'simplechart_api_http_headers', function ( $headers ) {
 		$user_pass = SIMPLECHART_DEV_MODE_BASIC_AUTH_USER . ':' . SIMPLECHART_DEV_MODE_BASIC_AUTH_PASSWORD;
 		// Add basic HTTP auth to dev site
-		if ( ! isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+		if ( isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
 			$headers['Authorization'] = 'Basic ' . base64_encode( $user_pass );
 		}
 
