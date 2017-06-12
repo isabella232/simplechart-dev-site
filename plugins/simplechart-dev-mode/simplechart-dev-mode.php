@@ -62,14 +62,19 @@ add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
 
 	if ( 'localhost' !== $source ) {
 		// add version hash to admin bar note
-		$app_path = ( 'app' === $source ) ?
-			SC_DEV_MODE_PATH . '/js' :
-			Simplechart::instance()->get_plugin_dir( 'js/app' );
-		$version_hash = simplechart_dev_mode_get_js_version( 'app', $app_path );
-		$node_html .= ' (' . esc_html( $version_hash ) . ')';
+		if ( class_exists( 'Simplechart' ) ) {
+			$app_path = ( 'app' === $source ) ?
+				SC_DEV_MODE_PATH . '/js' :
+				Simplechart::instance()->get_plugin_dir( 'js/app' );
+			$version_hash = simplechart_dev_mode_get_js_version( 'app', $app_path );
+			$node_html .= ' (' . esc_html( $version_hash ) . ')';
 
-		// link to version
-		$href = simplechart_dev_mode_get_github_commit_url( $version_hash );
+			// link to version
+			$href = simplechart_dev_mode_get_github_commit_url( $version_hash );
+		} else {
+			$node_html = 'Simplechart plugin not enabled.';
+			$href = false;
+		}
 	} else {
 		$href = false;
 	}
