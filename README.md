@@ -2,6 +2,14 @@
 
 This repo exists to help with local development for the [Simplechart][1] JS app and the [WordPress Simplechart][2] plugin.
 
+## Changing JS versions
+
+When the Simplechart Dev Mode plugin is activated, you'll find this option in your user settings.
+
+![user settings](img/user-settings.png)
+
+Note that the WordPress toolbar indicates which version of the JS source is active.
+
 ## Local JS app development
 
 First get the local Node environment running:

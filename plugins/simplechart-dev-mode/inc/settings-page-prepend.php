@@ -49,11 +49,13 @@ $override_widget_version = simplechart_dev_mode_get_js_version( 'widget', SC_DEV
 			<?php endif; ?>
 		</td>
 	</tr>
-	<tr>
-		<td><code>http://localhost:8080/static/app.js</code></td>
-		<td><?php echo esc_html( 'n/a', 'simplechart-dev-mode' ); ?></td>
-		<td><?php echo esc_html( 'n/a', 'simplechart-dev-mode' ); ?></td>
-	</tr>
+	<?php if ( ! isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) : ?>
+		<tr>
+			<td><code>http://localhost:8080/static/app.js</code></td>
+			<td><?php echo esc_html( 'n/a', 'simplechart-dev-mode' ); ?></td>
+			<td><?php echo esc_html( 'n/a', 'simplechart-dev-mode' ); ?></td>
+		</tr>
+	<?php endif; ?>
 </table>
 
 <h3><?php esc_html_e( 'Select version', 'simplechart-dev-mode' ); ?></h3>
