@@ -46,11 +46,17 @@ function simplechart_dev_mode_get_js_url( $type ) {
  * @return array
  */
 function simplechart_dev_mode_get_options() {
-	return array(
+	$opts = array(
 		'plugin' => __( 'Plugin', 'simplechart-dev-mode' ),
 		'app' => __( 'App', 'simplechart-dev-mode' ),
-		'localhost' => __( 'localhost:8080', 'simplechart-dev-mode' ),
 	);
+
+	// Don't enable localhost on Pantheon dev site
+	if ( ! isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+		$opts['localhost'] = __( 'localhost:8080', 'simplechart-dev-mode' );
+	}
+
+	return $opts;
 }
 
 /**
