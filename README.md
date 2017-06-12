@@ -8,7 +8,7 @@ This repo exists to help with local development for the [Simplechart][1] JS app 
 
 ## Changing JS versions
 
-When the Simplechart Dev Mode plugin is activated, you'll find this option in your user settings.
+The Simplechart Dev Mode plugin (`plugins/simplechart-dev-mode`) is the important thing in this repo. When it's activated, you'll find this option in your user settings.
 
 ![user settings](plugins/simplechart-dev-mode/img/user-settings.png)
 
