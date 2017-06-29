@@ -10,3 +10,6 @@ upgrade/
 # Hack to keep these plugins attached to their remotes
 plugins/meta-inspector/.git
 plugins/wordpress-simplechart/.git
+
+# Don't include simplechart-settings.php in version control
+plugins/simplechart-dev-mode/inc/simplechart-settings.php
