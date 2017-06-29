@@ -23,7 +23,6 @@ add_action( 'after_setup_theme', function() {
 	Simplechart_Dev_Mode_Settings::instance();
 } );
 
-
 // Override JS if applicable
 add_action( 'init', function() {
 	$source = simplechart_dev_mode_get_user_js_source();
