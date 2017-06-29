@@ -14,11 +14,15 @@
 define( 'SC_DEV_MODE_PATH', dirname( __FILE__ ) );
 require_once( SC_DEV_MODE_PATH . '/inc/helpers.php' );
 require_once( SC_DEV_MODE_PATH . '/inc/settings-page.php' );
+if ( file_exists( SC_DEV_MODE_PATH . '/inc/simplechart-settings.php' ) ) {
+	require_once( SC_DEV_MODE_PATH . '/inc/simplechart-settings.php' );
+}
 
 // User settings page
 add_action( 'after_setup_theme', function() {
 	Simplechart_Dev_Mode_Settings::instance();
 } );
+
 
 // Override JS if applicable
 add_action( 'init', function() {
