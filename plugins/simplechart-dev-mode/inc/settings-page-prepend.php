@@ -23,7 +23,7 @@ $override_widget_version = simplechart_dev_mode_get_js_version( 'widget', SC_DEV
 	</tr>
 	<tr>
 		<td><code>/wp-content/plugins/wordpress-simplechart/js/app/app.${version}.js</code></td>
-		<td><?php echo simplechart_dev_mode_get_github_commit_link( $default_app_version ); ?></td>
+		<td><?php echo esc_url( simplechart_dev_mode_get_github_commit_link( $default_app_version ) ); ?></td>
 		<td>
 			<?php if ( defined( 'SIMPLECHART_DEV_MODE_AUTODEPLOY_PLUGIN_BRANCH' ) ) : ?>
 				<a
@@ -37,7 +37,7 @@ $override_widget_version = simplechart_dev_mode_get_js_version( 'widget', SC_DEV
 	</tr>
 	<tr>
 		<td><code>/wp-content/plugins/simplechart-dev-mode/js/app.${version}.js</code></td>
-		<td><?php echo simplechart_dev_mode_get_github_commit_link( $override_app_version ); ?></td>
+		<td><?php echo esc_url( simplechart_dev_mode_get_github_commit_link( $override_app_version ) ); ?></td>
 		<td>
 			<?php if ( defined( 'SIMPLECHART_DEV_MODE_AUTODEPLOY_APP_BRANCH' ) ) : ?>
 				<a

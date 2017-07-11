@@ -2,7 +2,14 @@
 /**
  * FM submenu page with setting for overriding plugin js
  */
+
+/**
+ * Class for dev mode settings
+ */
 class Simplechart_Dev_Mode_Settings {
+	/**
+	 * @var instance
+	 */
 	private static $instance;
 
 	private function __construct() {
@@ -18,7 +25,7 @@ class Simplechart_Dev_Mode_Settings {
 	}
 
 	public function setup() {
-		add_action( 'fm_user', array( $this, 'options_init') );
+		add_action( 'fm_user', array( $this, 'options_init' ) );
 		add_action( 'fm_element_markup_start', array( $this, 'prepend_static_content' ), 10, 2 );
 	}
 
@@ -42,7 +49,7 @@ class Simplechart_Dev_Mode_Settings {
 				),
 				'description' => __( 'Subtitle field enabled by simplechart_enable_subtitle_field filter in theme', 'simplechart-dev-mode' ),
 			) );
-		} else  {
+		} else {
 			$subtitle_args['description'] = __( 'simplechart_enable_subtitle_field will apply only when you are the logged in user', 'simplechart-dev-mode' );
 		}
 
