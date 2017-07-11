@@ -23,12 +23,37 @@ class Simplechart_Dev_Mode_Settings {
 	}
 
 	public function options_init() {
-		$fm = new Fieldmanager_Radios( array(
+		$js_source = new Fieldmanager_Radios( array(
 			'name' => 'simplechart_dev_mode',
 			'options' => simplechart_dev_mode_get_options(),
 			'default_value' => 'plugin',
 		) );
-		$fm->add_user_form( 'Simplechart Dev Mode' );
+		$js_source->add_user_form( 'Simplechart Dev Mode' );
+
+		$subtitle_args = array(
+			'label' => __( 'Enable subtitle (Metadata)', 'simplechart-dev-mode' ),
+		);
+
+		if ( apply_filters( 'simplechart_enable_subtitle_field', false ) ) {
+			$subtitle_args = array_merge( $subtitle_args, array(
+				'attributes' => array(
+					'disabled' => true,
+					'checked' => true,
+				),
+				'description' => __( 'Subtitle field enabled by simplechart_enable_subtitle_field filter in theme', 'simplechart-dev-mode' ),
+			) );
+		} else  {
+			$subtitle_args['description'] = __( 'simplechart_enable_subtitle_field will apply only when you are the logged in user', 'simplechart-dev-mode' );
+		}
+
+		$optional_fields = new Fieldmanager_Group( array(
+			'name' => 'simplechart_optional_fields',
+			'children' => array(
+				'subtitle' => new Fieldmanager_Checkbox( $subtitle_args ),
+			),
+		) );
+
+		$optional_fields->add_user_form( __( 'Simplechart Optional Fields', 'simplechart-dev-mode' ) );
 	}
 
 	public function prepend_static_content( $out, $field ) {
