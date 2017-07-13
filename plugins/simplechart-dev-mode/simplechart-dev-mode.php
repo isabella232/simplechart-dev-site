@@ -48,7 +48,7 @@ add_action( 'init', function() {
 }, 99 );
 
 /**
- * Listen for admin_init so that we skip this stuff on the Your Profile page
+ * Listen for current_screen so that we skip this stuff on the Your Profile page
  */
 add_action( 'current_screen', function() {
 	if ( function_exists( 'get_current_screen' ) && 'profile' !== get_current_screen()->base ) {
