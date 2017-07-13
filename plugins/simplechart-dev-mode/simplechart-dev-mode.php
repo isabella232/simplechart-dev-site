@@ -23,8 +23,20 @@ add_action( 'after_setup_theme', function() {
 	Simplechart_Dev_Mode_Settings::instance();
 } );
 
-// Override JS if applicable
-add_action( 'init', function() {
+function simplechart_dev_mode_filter_optional_fields() {
+	$id = get_current_user_id();
+	$screen = get_current_screen();
+	if ( empty( $id ) || ( ! empty( $screen->base ) && 'profile' === $screen->base ) ) {
+		return;
+	}
+	$meta = get_user_meta( $id, 'simplechart_optional_fields', true );
+	if ( ! empty( $meta['subtitle'] ) ) {
+		add_filter( 'simplechart_enable_subtitle_field', '__return_true' );
+	}
+}
+add_action( 'admin_init', 'simplechart_dev_mode_filter_optional_fields' );
+
+function simplechart_dev_mode_filter_js_source() {
 	$source = simplechart_dev_mode_get_user_js_source();
 
 	// Default to JS from wordpress-simplechart plugin
@@ -52,7 +64,8 @@ add_action( 'init', function() {
 			'http://localhost:8080/static/widget.js' :
 			simplechart_dev_mode_get_js_url( 'widget' );
 	} );
-} );
+}
+add_action( 'init', 'simplechart_dev_mode_filter_js_source' );
 
 // Show Simplechart version in admin bar
 add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
@@ -64,7 +77,7 @@ add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
 	);
 
 	if ( 'localhost' !== $source ) {
-		// add version hash to admin bar note
+		// Add version hash to admin bar note
 		if ( class_exists( 'Simplechart' ) ) {
 			$app_path = ( 'app' === $source ) ?
 				SC_DEV_MODE_PATH . '/js' :
@@ -72,7 +85,7 @@ add_action( 'admin_bar_menu', function( $wp_admin_bar ) {
 			$version_hash = simplechart_dev_mode_get_js_version( 'app', $app_path );
 			$node_html .= ' (' . esc_html( $version_hash ) . ')';
 
-			// link to version
+			// Link to version
 			$href = simplechart_dev_mode_get_github_commit_url( $version_hash );
 		} else {
 			$node_html = 'Simplechart plugin not enabled.';

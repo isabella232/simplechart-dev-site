@@ -62,7 +62,7 @@ function simplechart_dev_mode_get_options() {
 /**
  * Get JS source for current user
  *
- * @param int $id Optional user ID, defaults to current logged-in user
+ * @param int $id Optional user ID, defaults to current logged-in user.
  * @return string 'plugin', 'app', 'localhost'. Defaults to 'plugin' if no user is available
  */
 function simplechart_dev_mode_get_user_js_source( $id = null ) {

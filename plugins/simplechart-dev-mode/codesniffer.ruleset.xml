@@ -6,6 +6,13 @@
 	<exclude-pattern>tests/*</exclude-pattern>
 
 	<!-- Include the WordPress ruleset, with exclusions. -->
-	<rule ref="WordPress" />
+	<rule ref="WordPress">
+		<exclude name="Squiz.Commenting.FunctionComment.ScalarTypeHintMissing" />
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag" />
+		<exclude name="WordPress.VIP.RestrictedFunctions.user_meta" />
+		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+	</rule>
 
 </ruleset>
