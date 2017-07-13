@@ -23,10 +23,13 @@ add_action( 'after_setup_theme', function() {
 	Simplechart_Dev_Mode_Settings::instance();
 } );
 
+/**
+ * Determine if the current logged-in user has enabled any options fields
+ * and add filters as needed
+ */
 function simplechart_dev_mode_filter_optional_fields() {
 	$id = get_current_user_id();
-	$screen = get_current_screen();
-	if ( empty( $id ) || ( ! empty( $screen->base ) && 'profile' === $screen->base ) ) {
+	if ( empty( $id ) ) {
 		return;
 	}
 	$meta = get_user_meta( $id, 'simplechart_optional_fields', true );
@@ -34,7 +37,24 @@ function simplechart_dev_mode_filter_optional_fields() {
 		add_filter( 'simplechart_enable_subtitle_field', '__return_true' );
 	}
 }
-add_action( 'admin_init', 'simplechart_dev_mode_filter_optional_fields' );
+
+/**
+ * Listen for init on non-admin pages
+ */
+add_action( 'init', function() {
+	if ( ! is_admin() ) {
+		simplechart_dev_mode_filter_optional_fields();
+	}
+}, 99 );
+
+/**
+ * Listen for current_screen so that we skip this stuff on the Your Profile page
+ */
+add_action( 'current_screen', function() {
+	if ( function_exists( 'get_current_screen' ) && 'profile' !== get_current_screen()->base ) {
+		simplechart_dev_mode_filter_optional_fields();
+	}
+}, 99 );
 
 function simplechart_dev_mode_filter_js_source() {
 	$source = simplechart_dev_mode_get_user_js_source();
